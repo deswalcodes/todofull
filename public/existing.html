@@ -1,0 +1,181 @@
+<html>
+    <head>
+        <title>Your Tasks</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #1d354d;
+                color: #333;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+
+            div {
+                margin-bottom: 20px;
+            }
+
+            button {
+                background-color: #030f1a;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                margin-bottom: 10px;
+            }
+
+            button:hover {
+                background-color: #1668a3;
+            }
+
+            table {
+                width: 600px;
+                border-collapse: collapse;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                background-color: #fff;
+            }
+
+            table, th, td {
+                border: 1px solid #ccc;
+            }
+
+            th, td {
+                padding: 15px;
+                text-align: center;
+                font-size: 16px;
+            }
+
+            th {
+                background-color: #071d2f;
+                color: white;
+            }
+
+            td {
+                background-color: #f9f9f9;
+            }
+
+            td button {
+                margin: 5px;
+                padding: 8px 15px;
+                font-size: 12px;
+                border-radius: 3px;
+            }
+
+            .complete-btn {
+                background-color: #28a745;
+            }
+
+            .complete-btn:hover {
+                background-color: #218838;
+            }
+
+            .delete-btn {
+                background-color: #dc3545;
+            }
+
+            .delete-btn:hover {
+                background-color: #c82333;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+            <button onclick="window.location.href='dashboard.html'">Add more Tasks</button>
+        </div>
+        <table id="tasks-table">
+            <thead>
+                <tr>
+                    <th>Your Tasks</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+               
+            </tbody>
+        </table>
+        <script src = 'https://unpkg.com/axios/dist/axios.min.js'></script>
+        <script>
+            async function fetchTodos(){
+                const response = await axios.get('http://localhost:4000/existing',{
+                    headers : {
+                        token : localStorage.getItem('token')
+                    }
+                });
+                populateTable(response.data.todos);
+            }
+            function populateTable(tasks){
+                const tableBody = document.querySelector('#tasks-table tbody');
+                tableBody.innerHTML = '';
+                tasks.forEach(task => {
+                    const row = document.createElement('tr');
+                    const taskCell = document.createElement('td');
+                    taskCell.textContent = task.task;
+                    row.appendChild(taskCell);
+
+                    const statusCell = document.createElement('td');
+                    statusCell.textContent = task.status ;
+                    row.appendChild(statusCell);
+                    const actionsCell = document.createElement('td');
+
+                    const completeButton = document.createElement('button');
+                    completeButton.textContent = 'Mark as Completed';
+                    completeButton.onclick = ()  => markasCompleted(task.task);
+                    actionsCell.appendChild(completeButton);
+                    const deleteButton = document.createElement('button');
+                    deleteButton.textContent = 'Delete';
+                    deleteButton.onclick = () => deleteTask(task.task);
+                    actionsCell.appendChild(deleteButton);
+
+                    row.appendChild(actionsCell);
+                    tableBody.appendChild(row);
+
+
+                    
+                });
+
+            }
+            async function markasCompleted(taskname){
+                try{
+                    await axios.post('http://localhost:4000/done',{
+                        todo : taskname
+                    },{
+                        headers : {
+                            token : localStorage.getItem('token')
+                        }
+                    });
+                    fetchTodos();
+                }
+                catch(error){
+                    console.error('Error')
+                }
+            }
+            async function deleteTask(taskname){
+                try{
+                    await axios.post('http://localhost:4000/delete',{
+                        todooo : taskname
+                    },{
+                        headers : {
+                            token : localStorage.getItem('token')
+                        }
+                    })
+                }
+                catch(error){
+                    console.error('error')
+                }
+                fetchTodos();
+            }
+            window.onload = fetchTodos();
+        </script>
+    </body>
+</html>

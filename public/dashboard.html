@@ -1,0 +1,171 @@
+<html>
+    <head>
+        <title>Dashboard</title>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #000;
+                color: #fff;
+                height: 100vh;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
+
+            #dashboard-container {
+                background-color: #1e1e1e;
+                border-radius: 12px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+                padding: 20px;
+                width: 400px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                position: relative;
+            }
+
+            /* Header Layout */
+            #header {
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 20px;
+                color: #fff;
+            }
+
+            #name {
+                font-size: 18px;
+                font-weight: bold;
+            }
+
+            #logout {
+                display: flex;
+                align-items: center;
+            }
+
+            #logout button {
+                background-color: #ff4b4b;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+            }
+
+            #logout button:hover {
+                background-color: #ff3333;
+            }
+
+            #heading {
+                font-size: 22px;
+                margin-bottom: 20px;
+                font-weight: bold;
+                color: #fff;
+            }
+
+            input[type="text"] {
+                width: calc(100% - 130px); 
+                padding: 10px;
+                margin-bottom: 10px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                font-size: 16px;
+            }
+
+            button {
+                background-color: #011628;
+                color: white;
+                padding: 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 16px;
+                margin-left: 10px; 
+            }
+
+            button:hover {
+                background-color: #1668a3;
+            }
+        </style>
+        
+    </head>
+    <body>
+        <div id="dashboard-container">
+            
+            <div id="header">
+                <div id="name">
+                    Welcome  <span id= "username"> </span>
+                </div>
+                <div id="logout">
+                    <button onclick="logout()">Log Out!</button>
+                </div>
+            </div>
+
+            
+            <div id="heading">
+                Add your Todos!
+            </div>
+
+           
+            <div>
+                <input id="createtodo" type="text" placeholder="New Task">
+                <button onclick="addtodo()">Add </button>
+            </div>
+            
+        </div>
+
+        <script src = "https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+            window.onload = function() {
+                getUser();
+            };
+            async function addtodo(){
+                const todo = document.getElementById("createtodo").value;
+                try{
+                    const response = await axios.post("http://localhost:4000/create",{
+                        tod : todo
+                    },{
+                        headers : {
+                            token : localStorage.getItem('token')
+                        }
+                    })
+                    alert('New Todo Added')
+                    window.location.href = 'existing.html'
+                    
+                }
+                catch(error){
+                    alert('Error creating the todo!')
+                }
+                
+               
+            }
+            
+
+
+
+            async function getUser(){
+                const response = await axios.get('http://localhost:4000/user',{
+                    headers : {
+                        token : localStorage.getItem('token')
+                    }
+                })
+                document.getElementById("username").innerHTML = response.data.name;
+                
+            }
+            async function logout(){
+                localStorage.clear('token');
+                window.location.href = "http://localhost:4000/"
+            }
+        </script>
+    </body>
+
+
+</html>

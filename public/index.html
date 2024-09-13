@@ -1,0 +1,129 @@
+<html>
+    <head>
+        <title>Your Own Todo Handler!</title>
+    </head>
+    <body>
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                background-color: #121517;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+                margin: 0;
+            }
+    
+            #container {
+                background-color: #fff;
+                border-radius: 8px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                width: 300px;
+                padding: 20px;
+                text-align: center;
+            }
+    
+            #heading {
+                font-size: 24px;
+                font-weight: bold;
+                color: #333;
+                margin-bottom: 20px;
+            }
+    
+            h2 {
+                text-align: center;
+                color: #333;
+                margin-bottom: 20px;
+            }
+    
+            input[type="text"], input[type="password"] {
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                box-sizing: border-box;
+            }
+    
+            button {
+                width: 100%;
+                background-color: #031944;
+                color: white;
+                padding: 10px;
+                margin: 10px 0;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: 16px;
+            }
+    
+            button:hover {
+                background-color: #45a049;
+            }
+    
+            #Signup, #SignIn {
+                margin-bottom: 20px;
+            }
+    
+            .form-section {
+                margin-bottom: 20px;
+            }
+        </style>
+        
+        <div id ="container">
+            <div id ="heading">
+                Personal ToDo Handler
+            </div>
+            <div id ="Signup">
+                Sign Up!
+                <input id ="signupusername" type = "text" placeholder = "Username">
+                <input id ="signuppassword" type = "password" placeholder = "Password">
+                <button onclick = "signup()">Sign Up!</button>
+            </div>
+            <div id ="Sign In!">
+                Sign In!
+                <input id ="signinusername" type = "text" placeholder = "Username">
+                <input id ="signinpassword" type = "password" placeholder = "Password">
+                <button onclick = "signin()">Sign In!</button>
+
+            </div>
+
+        </div>
+
+        <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+        <script>
+            async function signup(){
+                const username = document.getElementById("signupusername").value;
+                const password = document.getElementById("signuppassword").value;
+                await axios.post("http://localhost:4000/signup",{
+                    username : username,
+                    password : password
+                })
+                alert("You are Signed in!")
+            }
+            async function signin(){
+                const username = document.getElementById("signinusername").value;
+                const password = document.getElementById("signinpassword").value;
+                try{
+                    const response = await axios.post('http://localhost:4000/signin',{
+                        username : username,
+                        password :password
+                    })
+                    localStorage.setItem("token",response.data.token);
+                    if(localStorage.getItem("token")){
+                        alert("You are signed in!");
+                        window.location.href = 'dashboard.html';
+                    }
+                }
+                catch(error){
+                    alert("Wrong Username or Password");
+                }
+
+
+                
+
+
+            }
+        </script>
+    </body>
+</html>
